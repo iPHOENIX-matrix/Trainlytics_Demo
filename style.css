@@ -157,20 +157,35 @@ input:focus {
 
 /* 🔥 IMPORTANT FIX: STACK INPUTS ON MOBILE */
 
+/* ================= CLEAN HORIZONTAL SET ROW ================= */
+
 .set-row {
-  display: grid;
-  grid-template-columns: 70px 1fr 50px 1fr 50px;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
-
-.set-row span {
+.set-row > span {
+  width: 55px;
   font-size: 14px;
   color: var(--muted);
   font-weight: 600;
 }
+
+/* Make weight + reps sit side by side */
+.input-with-unit {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.input-with-unit span {
+  font-size: 12px;
+  margin-top: 6px;
+  color: var(--muted);
+}
+
 
 
 /* ================= FAILURE DISPLAY ================= */
@@ -341,3 +356,4 @@ input:focus {
   font-size: 18px;
   font-weight: 700;
 }
+
