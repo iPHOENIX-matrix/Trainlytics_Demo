@@ -1,0 +1,335 @@
+/* =====================================================
+   TRAINLYTICS V3 — WHITE ELITE EDITION (iPhone Optimized)
+===================================================== */
+
+/* ================= COLOR SYSTEM ================= */
+
+:root {
+  --bg: #ffffff;
+  --card: #0f1115;
+  --card-2: #171a21;
+  --border: #252a35;
+  --accent: #0a84ff;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #facc15;
+
+  --text-dark: #111111;
+  --text-light: #ffffff;
+  --muted: #9aa4bb;
+}
+
+/* ================= GLOBAL ================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background: var(--bg);
+  color: var(--text-dark);
+  overflow-x: hidden;
+
+  /* iPhone safe areas */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+.container {
+  padding: 20px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ================= TYPOGRAPHY ================= */
+
+h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 10px 0 28px 0;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+small {
+  color: var(--muted);
+}
+
+/* ================= MAIN CARD SYSTEM ================= */
+
+.card {
+  background: var(--card);
+  color: var(--text-light);
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+}
+
+/* ================= BUTTONS ================= */
+
+button {
+  border: none;
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+.delete-btn { background: var(--red); }
+.edit-btn { background: var(--green); }
+
+/* ================= INPUTS ================= */
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: #1c2028;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #6f7a94;
+  opacity: 1;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(10,132,255,0.25);
+}
+
+/* ================= WORKOUT PAGE ================= */
+
+#workoutDate {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+#workoutTitle {
+  font-size: 34px;
+  font-weight: 900;
+  margin-top: 6px;
+}
+
+.exercise-card {
+  background: var(--card-2);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.exercise-card h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+/* 🔥 IMPORTANT FIX: STACK INPUTS ON MOBILE */
+
+.set-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.set-row span {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ================= FAILURE DISPLAY ================= */
+
+.failure-display {
+  margin-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.failure-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* ================= CALENDAR ================= */
+
+.month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-btn {
+  background: var(--card-2);
+  border-radius: 14px;
+  width: 42px;
+  height: 42px;
+  font-size: 18px;
+  color: white;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.calendar-day {
+  background: var(--card-2);
+  border-radius: 14px;
+  padding: 14px 0;
+  text-align: center;
+  font-weight: 600;
+  border: none;
+  color: white;
+}
+
+.calendar-day.today {
+  outline: 2px solid var(--accent);
+}
+
+.calendar-day.completed {
+  background: var(--green);
+  color: black;
+}
+
+.calendar-day.rest {
+  background: var(--yellow);
+  color: black;
+}
+
+/* ================= WORKOUT PLAN ================= */
+
+.day-block {
+  background: var(--card);
+  color: white;
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* ================= NAVBAR — FIXED FOR IPHONE ================= */
+
+.navbar {
+  position: fixed;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: calc(100% - 32px);
+  max-width: 720px;
+  height: 56px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: #0f1115;
+  border-radius: 20px;
+
+  box-shadow: 0 14px 40px rgba(0,0,0,0.25);
+  border: 1px solid #1f232d;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.7;
+  transition: 0.2s ease;
+}
+
+.navbar a:hover {
+  opacity: 1;
+}
+
+.navbar a.active {
+  opacity: 1;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ================= LOADER ================= */
+
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ================= BACK HEADER FIX ================= */
+
+.plan-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.plan-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.back-arrow {
+  position: absolute;
+  left: 0;
+  background: #eaecef;
+  color: #111;
+  border-radius: 14px;
+  padding: 8px 14px;
+  font-size: 18px;
+  font-weight: 700;
+}

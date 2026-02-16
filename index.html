@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trainlytics</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+</head>
+
+<body>
+
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+<div class="container">
+
+  <div class="home-header">
+    <div class="card">
+      <h2>TRAINLYTICS</h2>
+    </div>
+
+    <div class="card">
+      <small id="todayDate"></small>
+      <h2 id="todayWorkout"></h2>
+    </div>
+  </div>
+
+  <div class="card stats-card">
+    <div class="stat">
+      <span>🔥</span>
+      <small>Streak</small>
+      <h3 id="streakCount">0</h3>
+    </div>
+
+    <div class="stat">
+      <span>📅</span>
+      <small>This Month</small>
+      <h3 id="monthlyCount">0</h3>
+    </div>
+
+    <div class="stat">
+      <span>🏆</span>
+      <small>Best PR</small>
+      <h3 id="bestPR">-</h3>
+    </div>
+  </div>
+
+  <div class="home-actions">
+    <div class="card action-card" onclick="startWorkout()">
+      <h3>Start Your Workout</h3>
+    </div>
+
+    <div class="card action-card" onclick="goToPlan()">
+      <h3>Workout Plan</h3>
+    </div>
+  </div>
+
+</div>
+
+<div class="navbar">
+  <a href="index.html">Home</a>
+  <a href="calendar.html">Calendar</a>
+  <a href="progress.html">Progress</a>
+  <a href="settings.html">Settings</a>
+</div>
+
+<script src="js/storage.js"></script>
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const data = getData();
+  const workouts = data.workouts;
+
+  const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
+
+  document.getElementById("todayDate").innerText =
+    today.toDateString();
+
+  // Active plan workout name
+  const plan = data.workoutPlans[data.activePlanId];
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const dayName = days[today.getDay()];
+  const todayPlan = plan.days[dayName];
+
+  let displayText = "No Plan";
+
+  if (todayPlan) {
+
+    if (todayPlan.groups && todayPlan.groups.length > 0) {
+      // Show group names instead of generic day name
+      const groupNames = todayPlan.groups.map(g => g.name);
+      displayText = groupNames.join(" + ");
+    } else {
+      displayText = todayPlan.name;
+    }
+
+}
+
+document.getElementById("todayWorkout").innerText = displayText;
+
+
+  // Monthly count
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  let monthCount = 0;
+
+  Object.keys(workouts).forEach(date => {
+    const d = new Date(date);
+    if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+      monthCount++;
+    }
+  });
+
+  document.getElementById("monthlyCount").innerText = monthCount;
+
+  // 🔥 Correct Streak Logic (timezone safe)
+
+  let streak = 0;
+
+  function getTodayString() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().split("T")[0];
+  }
+
+  let checkDateStr = getTodayString();
+
+  while (workouts[checkDateStr]) {
+    streak++;
+
+    const d = new Date(checkDateStr);
+    d.setDate(d.getDate() - 1);
+
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    checkDateStr = local.toISOString().split("T")[0];
+  }
+
+  document.getElementById("streakCount").innerText = streak;
+
+
+  // Best PR
+  const bestPR = Math.max(...Object.values(data.pr || {}), 0);
+  document.getElementById("bestPR").innerText = bestPR || "-";
+});
+
+function startWorkout() {
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  const todayStr = localDate.toISOString().split("T")[0];
+
+  window.location.href = `workout.html?edit=${todayStr}`;
+}
+
+
+function goToPlan() {
+  window.location.href = "workout-plan.html?mode=view";
+}
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const loader = document.getElementById("loader");
+  if (!loader) return;
+
+  setTimeout(() => {
+    loader.style.opacity = "0";
+    setTimeout(() => loader.remove(), 300);
+  }, 100);
+});
+</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Workout - Trainlytics</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+</head>
+
+<body>
+
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+<div class="container">
+
+  <div class="card">
+    <small id="workoutDate"></small>
+    <h1 id="workoutTitle">Loading...</h1>
+  </div>
+
+  <div id="workoutContainer"></div>
+
+</div>
+
+<div class="navbar">
+  <a href="index.html">Home</a>
+  <a href="calendar.html">Calendar</a>
+  <a href="progress.html">Progress</a>
+  <a href="settings.html">Settings</a>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/workout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const loader = document.getElementById("loader");
+  if (!loader) return;
+
+  setTimeout(() => {
+    loader.style.opacity = "0";
+    setTimeout(() => loader.remove(), 300);
+  }, 100);
+});
+</script>
+
+
+
+
+</body>
+</html>
