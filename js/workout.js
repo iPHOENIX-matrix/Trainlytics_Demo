@@ -1,3 +1,8 @@
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) loader.style.display = "none";
+}
+
 function getTodayString() {
   const now = new Date();
   const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
@@ -28,9 +33,33 @@ function renderWorkout() {
   const data = getData();
   const todayPlan = getWorkoutPlanForDate(targetDate);
 
+  const isRestDay = !todayPlan || todayPlan.groups.length === 0;
+
   dateLabel.innerText = new Date(targetDate).toDateString();
-  title.innerText = todayPlan.name;
   container.innerHTML = "";
+
+  /* ================= REST DAY ================= */
+
+  if (isRestDay) {
+
+    title.innerText = todayPlan?.name || "Rest";
+
+    hideLoader();
+    return; // 🔥 THIS STOPS EVERYTHING BELOW
+
+  }
+
+  /* ================= NORMAL WORKOUT ================= */
+
+  title.innerHTML = `
+    <span id="workoutTitleText">${todayPlan.name}</span>
+    <button onclick="editWorkoutTitle()" style="margin-left:10px;">
+      Edit
+    </button>
+    <button onclick="triggerChangePlan()" style="margin-left:10px;">
+      Change Plan
+    </button>
+  `;
 
   todayPlan.groups.forEach(group => {
 
@@ -62,6 +91,7 @@ function renderWorkout() {
   renderOptionalExercises(container);
 
   restoreDraft();
+  hideLoader();
 }
 
 /* ================= OPTIONAL EXERCISES ================= */
@@ -150,9 +180,23 @@ function generateExerciseCard(exercise, setCount, originalExercise = null) {
           onclick="replaceExercise('${originalExercise || exercise}')">
           Replace
         </button>
+
+        <button class="delete-btn"
+          onclick="deleteExercise(this)">
+          Delete
+        </button>
       </div>
     </div>
   `;
+}
+
+function deleteExercise(button) {
+
+  const confirmDelete = confirm("Are you sure you want to delete this exercise?");
+  if (!confirmDelete) return;
+
+  const card = button.closest(".exercise-card");
+  card?.remove();
 }
 
 /* ================= TREADMILL CARD ================= */
@@ -410,4 +454,302 @@ function restoreDraft() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", renderWorkout);
+function loadCustomWorkoutBuilder() {
+
+  document.getElementById("recoveryModal")?.remove();
+  hideLoader();
+
+  const container = document.getElementById("workoutContainer");
+  container.innerHTML = "";
+
+  document.getElementById("workoutTitle").innerText =
+    "Custom Workout";
+
+  document.getElementById("workoutDate").innerText =
+    new Date(getTargetDate()).toDateString();
+
+  container.innerHTML = `
+    <div class="card">
+      <h3>Custom Workout</h3>
+      <div id="customGroup"></div>
+      <button onclick="addCustomExercise()">Add Exercise</button>
+    </div>
+  `;
+}
+
+function startEmptyWorkout() {
+
+  const workoutName = prompt("Enter Workout Name:");
+  if (!workoutName) return;
+
+  document.getElementById("recoveryModal")?.remove();
+  hideLoader();
+
+  const container = document.getElementById("workoutContainer");
+  container.innerHTML = "";
+
+  document.getElementById("workoutTitle").innerHTML = `
+  <span id="workoutTitleText">${workoutName}</span>
+  <button onclick="editWorkoutTitle()" style="margin-left:10px;">
+    Edit
+  </button>
+  `;
+
+  const data = getData();
+  const date = getTargetDate();
+
+  if (!data.customWorkouts) data.customWorkouts = {};
+
+  data.customWorkouts[date] = {
+    title: workoutName,
+    groups: []
+  };
+
+saveData(data);
+
+  document.getElementById("workoutDate").innerText =
+    new Date(getTargetDate()).toDateString();
+
+  container.innerHTML = `
+    <div id="customGroups"></div>
+
+    <div class="card">
+      <button onclick="addCustomGroup()">+ Add Group</button>
+    </div>
+  `;
+
+}
+
+function editWorkoutTitle() {
+
+  const titleElement = document.getElementById("workoutTitleText");
+  const newTitle = prompt("Enter Workout Name:", titleElement.innerText);
+  if (!newTitle) return;
+
+  titleElement.innerText = newTitle;
+
+  const data = getData();
+  const date = getTargetDate();
+
+  if (data.customWorkouts?.[date]) {
+    data.customWorkouts[date].title = newTitle;
+    saveData(data);
+  }
+}
+
+let customGroupCounter = 0;
+
+function addCustomGroup() {
+
+  const groupName = prompt("Enter Group Name:");
+  if (!groupName) return;
+
+  const data = getData();
+  const date = getTargetDate();
+
+  if (!data.customWorkouts?.[date]) return;
+
+  // ✅ Save to data FIRST
+  data.customWorkouts[date].groups.push({
+    name: groupName,
+    exercises: []
+  });
+
+  saveData(data);
+
+  const groupsContainer = document.getElementById("customGroups");
+  const groupId = "group" + Date.now();
+
+  // ✅ Then render UI
+  groupsContainer.innerHTML += `
+    <div class="card" id="${groupId}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 class="group-title">${groupName}</h3>
+        <button onclick="editGroupName('${groupId}')">Edit</button>
+      </div>
+
+      <div class="group-exercises"></div>
+
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button onclick="addExerciseToGroup('${groupId}')">
+          Add Exercise
+        </button>
+
+        <button class="delete-btn"
+          onclick="removeGroup('${groupId}')">
+          Delete Group
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function editGroupName(groupId) {
+
+  const groupCard = document.getElementById(groupId);
+  const titleElement = groupCard.querySelector(".group-title");
+
+  const newName = prompt("Enter new group name:", titleElement.innerText);
+  if (!newName) return;
+
+  titleElement.innerText = newName;
+}
+
+function addExerciseToGroup(groupId) {
+
+  const groupCard = document.getElementById(groupId);
+  const exerciseContainer =
+    groupCard.querySelector(".group-exercises");
+
+  const name = prompt("Exercise name?");
+  if (!name) return;
+
+  exerciseContainer.innerHTML += generateExerciseCard(name, 3, name);
+
+  const data = getData();
+  const date = getTargetDate();
+
+  const groupIndex = [...document.querySelectorAll("#customGroups .card")]
+    .findIndex(card => card.id === groupId);
+
+  data.customWorkouts[date].groups[groupIndex].exercises.push({
+    name,
+    sets: 3
+  });
+
+  saveData(data);
+}
+
+function removeGroup(groupId) {
+
+  const confirmDelete = confirm("Are you sure you want to delete this group?");
+  if (!confirmDelete) return;
+
+  const data = getData();
+  const date = getTargetDate();
+
+  const groupCards = [...document.querySelectorAll("#customGroups .card")];
+  const groupIndex = groupCards.findIndex(card => card.id === groupId);
+
+  if (groupIndex > -1) {
+    data.customWorkouts[date].groups.splice(groupIndex, 1);
+    saveData(data);
+  }
+
+  document.getElementById(groupId)?.remove();
+}
+
+function addCustomExercise() {
+
+  const group = document.getElementById("customGroup");
+
+  const name = prompt("Exercise name?");
+  if (!name) return;
+
+  group.innerHTML += generateExerciseCard(name, 3, name);
+}
+
+function restoreCustomWorkout() {
+
+  hideLoader();
+
+  const data = getData();
+  const date = getTargetDate();
+
+  if (!data.customWorkouts || !data.customWorkouts[date]) {
+    renderWorkout();
+    return;
+  }
+
+  const workout = data.customWorkouts[date];
+
+  const container = document.getElementById("workoutContainer");
+  container.innerHTML = "";
+
+  document.getElementById("workoutTitle").innerHTML = `
+    <span id="workoutTitleText">${workout.title}</span>
+    <button onclick="editWorkoutTitle()" style="margin-left:10px;">
+      Edit
+    </button>
+  `;
+
+  document.getElementById("workoutDate").innerText =
+    new Date(date).toDateString();
+
+  container.innerHTML = `
+    <div id="customGroups"></div>
+    <div class="card">
+      <button onclick="addCustomGroup()">+ Add Group</button>
+    </div>
+  `;
+
+  workout.groups.forEach(group => {
+    addCustomGroupFromRestore(group.name, group.exercises);
+  });
+}
+
+function addCustomGroupFromRestore(name, exercises) {
+
+  customGroupCounter++;
+
+  const groupsContainer = document.getElementById("customGroups");
+  const groupId = "group" + Date.now() + Math.random();
+
+  groupsContainer.innerHTML += `
+    <div class="card" id="${groupId}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 class="group-title">${name}</h3>
+        <button onclick="editGroupName('${groupId}')">Edit</button>
+      </div>
+
+      <div class="group-exercises"></div>
+
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button onclick="addExerciseToGroup('${groupId}')">
+          Add Exercise
+        </button>
+
+        <button class="delete-btn"
+          onclick="removeGroup('${groupId}')">
+          Delete Group
+        </button>
+      </div>
+    </div>
+  `;
+
+  const groupCard = document.getElementById(groupId);
+  const exerciseContainer = groupCard.querySelector(".group-exercises");
+
+  exercises.forEach(ex => {
+    exerciseContainer.innerHTML += generateExerciseCard(ex.name, ex.sets, ex.name);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const date = getTargetDate();
+  const plan = getWorkoutPlanForDate(date);
+
+  // If today is rest day → just render rest
+  if (!plan || plan.groups.length === 0) {
+    renderWorkout();
+    return;
+  }
+
+  const data = getData();
+
+  // If custom workout exists for today → load it
+  if (data.customWorkouts?.[date]) {
+    restoreCustomWorkout();
+    return;
+  }
+
+  const missedCount = countMissedWorkouts();
+
+  if (missedCount > 0) {
+    showRecoveryModal(missedCount);
+  } else {
+    renderWorkout();
+  }
+
+});

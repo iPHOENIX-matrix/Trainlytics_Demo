@@ -62,6 +62,10 @@ function renderCalendar() {
       cell.classList.add("completed");
     }
 
+    if (data.missedWorkouts?.[dateString]) {
+      cell.classList.add("missed");
+    }
+
     if (dateObj.getDay() === 0) {
       cell.classList.add("rest");
     }

@@ -41,6 +41,14 @@ function getData() {
     data.exerciseOverrides = {};
   }
 
+  if (!data.missedWorkouts) {
+    data.missedWorkouts = {};
+  }
+  
+  if (!data.recoveryChoice) {
+    data.recoveryChoice = {};
+  }
+
   saveData(data);
   return data;
 }
