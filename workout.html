@@ -2,53 +2,117 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
   <title>Workout - Trainlytics</title>
+
   <link rel="stylesheet" href="style.css" />
+
   <meta name="theme-color" content="#0b0c10">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent">
+
+  <style>
+
+  /* ===== PREMIUM WORKOUT HEADER ===== */
+
+  .workout-header {
+
+    background: var(--card);
+
+    border-radius: 14px;
+
+    padding: 16px;
+
+    margin-bottom: 14px;
+
+    border: 1px solid var(--border);
+
+  }
+
+  .workout-header small {
+
+    font-size: 11px;
+
+    color: var(--text-secondary);
+
+  }
+
+  .workout-header h1 {
+
+    font-size: 20px;
+
+    margin: 4px 0 0 0;
+
+  }
+
+  </style>
 
 </head>
 
 <body>
 
-  <div id="loader">
-    <div class="spinner"></div>
-  </div>
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
 
 <div class="container">
 
-  <div class="card">
+  <!-- Premium Header -->
+  <div class="workout-header">
+
     <small id="workoutDate"></small>
+
     <h1 id="workoutTitle">Loading...</h1>
+
   </div>
 
+
+  <!-- Workout Content -->
   <div id="workoutContainer"></div>
 
 </div>
 
+
 <div class="navbar">
+
   <a href="index.html">Home</a>
+
   <a href="calendar.html">Calendar</a>
+
   <a href="progress.html">Progress</a>
+
   <a href="settings.html">Settings</a>
+
 </div>
+
 
 <script src="js/storage.js"></script>
 <script src="js/recoveryEngine.js"></script>
 <script src="js/workout.js"></script>
 
+
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
+
   const loader = document.getElementById("loader");
+
   if (!loader) return;
 
   setTimeout(() => {
+
     loader.style.opacity = "0";
+
     setTimeout(() => loader.remove(), 300);
+
   }, 100);
+
 });
+
 </script>
 
 </body>

@@ -1,23 +1,30 @@
 /* =====================================================
-   TRAINLYTICS V3 — WHITE ELITE EDITION (iPhone Optimized)
+   TRAINLYTICS V4 — PREMIUM MINIMAL EDITION
+   Clean • Square • Elite • Fully Backward Compatible
 ===================================================== */
 
 /* ================= COLOR SYSTEM ================= */
 
 :root {
-  --bg: #ffffff;
-  --card: #0f1115;
-  --card-2: #171a21;
-  --border: #252a35;
-  --accent: #0a84ff;
+
+  --bg: #0b0c10;
+
+  --card: #111318;
+  --card-2: #151821;
+
+  --border: #1c1f26;
+
+  --accent: #4da3ff;
+
   --green: #22c55e;
   --red: #ef4444;
   --yellow: #facc15;
 
-  --text-dark: #111111;
-  --text-light: #ffffff;
-  --muted: #9aa4bb;
+  --text-primary: #ffffff;
+  --text-secondary: #8b90a0;
+
 }
+
 
 /* ================= GLOBAL ================= */
 
@@ -30,358 +37,605 @@ html {
 }
 
 body {
+
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "SF Pro Display",
+    system-ui,
+    sans-serif;
+
   background: var(--bg);
-  color: var(--text-dark);
+
+  color: var(--text-primary);
+
   overflow-x: hidden;
 
-  /* iPhone safe areas */
   padding-top: env(safe-area-inset-top);
-  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
+
 }
 
+
+/* ================= CONTAINER ================= */
+
 .container {
-  padding: 20px;
-  max-width: 720px;
+
+  padding: 18px;
+
+  max-width: 680px;
+
   margin: 0 auto;
+
 }
+
 
 /* ================= TYPOGRAPHY ================= */
 
 h1 {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 10px 0 28px 0;
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  margin: 6px 0 18px 0;
+
+  letter-spacing: -0.2px;
+
 }
 
 h2 {
-  font-size: 22px;
-  font-weight: 700;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  margin: 0;
+
 }
 
 h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0 0 10px 0;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  margin: 0 0 6px 0;
+
+}
+
+h4 {
+
+  font-size: 13px;
+
+  font-weight: 600;
+
 }
 
 small {
-  color: var(--muted);
+
+  font-size: 11px;
+
+  color: var(--text-secondary);
+
 }
 
-/* ================= MAIN CARD SYSTEM ================= */
+
+/* ================= PREMIUM CARD SYSTEM ================= */
 
 .card {
+
   background: var(--card);
-  color: var(--text-light);
-  border-radius: 22px;
-  padding: 22px;
-  margin-bottom: 22px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+
+  border-radius: 14px;
+
+  padding: 16px;
+
+  margin-bottom: 14px;
+
+  border: 1px solid var(--border);
+
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.25);
+
 }
+
 
 /* ================= BUTTONS ================= */
 
 button {
+
   border: none;
-  padding: 14px 16px;
-  border-radius: 16px;
-  font-size: 15px;
+
+  padding: 10px 14px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
   font-weight: 600;
+
   background: var(--accent);
+
   color: white;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition: all 0.15s ease;
+
+}
+
+button:hover {
+
+  opacity: 0.9;
+
 }
 
 button:active {
+
   transform: scale(0.96);
+
 }
 
-.delete-btn { background: var(--red); }
-.edit-btn { background: var(--green); }
+.delete-btn {
+
+  background: var(--red);
+
+}
+
+.edit-btn {
+
+  background: var(--green);
+
+}
+
 
 /* ================= INPUTS ================= */
 
 input {
+
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;   /* WHITE INPUT */
-  color: #111111;
-  font-size: 15px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  border: 1px solid var(--border);
+
+  background: #0f1115;
+
+  color: white;
+
+  font-size: 13px;
+
   font-weight: 500;
+
   outline: none;
-  transition: 0.2s ease;
+
 }
 
 input::placeholder {
-  color: #9ca3af;
+
+  color: #6b7280;
+
 }
 
 input:focus {
+
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(10,132,255,0.15);
+
 }
 
 
-/* ================= WORKOUT PAGE ================= */
+/* ================= WORKOUT ================= */
 
 #workoutDate {
-  font-size: 13px;
-  color: var(--muted);
+
+  font-size: 12px;
+
+  color: var(--text-secondary);
+
 }
 
 #workoutTitle {
-  font-size: 34px;
-  font-weight: 900;
-  margin-top: 6px;
+
+  font-size: 20px;
+
+  font-weight: 700;
+
+  margin-top: 4px;
+
 }
+
+
+/* ================= EXERCISE CARD ================= */
 
 .exercise-card {
-  background: var(--card-2);
-  border-radius: 20px;
-  padding: 22px;
-  margin-bottom: 20px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-}
 
+  background: var(--card-2);
+
+  border-radius: 14px;
+
+  padding: 14px;
+
+  margin-bottom: 12px;
+
+  border: 1px solid var(--border);
+
+}
 
 .exercise-card h4 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 18px;
+
+  font-size: 13px;
+
+  margin-bottom: 12px;
+
 }
 
-/* 🔥 IMPORTANT FIX: STACK INPUTS ON MOBILE */
 
-/* ================= CLEAN HORIZONTAL SET ROW ================= */
+/* ================= SET ROW ================= */
 
 .set-row {
+
   display: flex;
+
   align-items: center;
-  gap: 14px;
-  margin-bottom: 18px;
+
+  gap: 10px;
+
+  margin-bottom: 12px;
+
 }
 
 .set-row > span {
-  width: 55px;
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 600;
+
+  width: 50px;
+
+  font-size: 12px;
+
+  color: var(--text-secondary);
+
 }
 
-/* Make weight + reps sit side by side */
 .input-with-unit {
+
   display: flex;
+
   flex-direction: column;
+
   flex: 1;
+
 }
 
 .input-with-unit span {
-  font-size: 12px;
-  margin-top: 6px;
-  color: var(--muted);
-}
 
+  font-size: 10px;
+
+  margin-top: 4px;
+
+  color: var(--text-secondary);
+
+}
 
 
 /* ================= FAILURE DISPLAY ================= */
 
 .failure-display {
-  margin-top: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #cbd5e1;
+
+  margin-top: 10px;
+
+  font-size: 12px;
+
+  color: var(--text-secondary);
+
 }
 
 .failure-value {
-  font-size: 20px;
-  font-weight: 800;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
   color: var(--accent);
+
 }
 
 
 /* ================= CALENDAR ================= */
 
 .month-header {
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
 }
 
 .nav-btn {
+
   background: var(--card-2);
-  border-radius: 14px;
-  width: 42px;
-  height: 42px;
-  font-size: 18px;
+
+  border-radius: 10px;
+
+  width: 34px;
+
+  height: 34px;
+
+  font-size: 14px;
+
   color: white;
+
+  border: 1px solid var(--border);
+
 }
 
 .calendar-grid {
+
   display: grid;
+
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-  margin-top: 15px;
+
+  gap: 6px;
+
+  margin-top: 10px;
+
 }
 
 .calendar-day {
+
   background: var(--card-2);
-  border-radius: 14px;
-  padding: 14px 0;
-  text-align: center;
-  font-weight: 600;
-  border: none;
-  color: white;
+
+  border-radius: 10px;
+
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 12px;
+
+  border: 1px solid var(--border);
+
 }
 
 .calendar-day.today {
-  outline: 2px solid var(--accent);
+
+  border: 1px solid var(--accent);
+
 }
 
 .calendar-day.completed {
+
   background: var(--green);
+
   color: black;
+
 }
 
 .calendar-day.rest {
+
   background: var(--yellow);
+
   color: black;
+
 }
+
+.calendar-day.missed {
+
+  background: #f97316;
+
+  color: white;
+
+}
+
 
 /* ================= WORKOUT PLAN ================= */
 
 .day-block {
+
   background: var(--card);
-  color: white;
-  border-radius: 22px;
-  padding: 24px;
-  margin-bottom: 28px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+
+  border-radius: 14px;
+
+  padding: 16px;
+
+  margin-bottom: 16px;
+
+  border: 1px solid var(--border);
+
 }
 
-/* ================= NAVBAR — FIXED FOR IPHONE ================= */
+
+/* ================= NAVBAR ================= */
 
 .navbar {
+
   position: fixed;
-  bottom: calc(18px + env(safe-area-inset-bottom));
+
+  bottom: calc(14px + env(safe-area-inset-bottom));
+
   left: 50%;
+
   transform: translateX(-50%);
-  
-  width: calc(100% - 32px);
-  max-width: 720px;
-  height: 56px;
+
+  width: calc(100% - 24px);
+
+  max-width: 680px;
+
+  height: 54px;
 
   display: flex;
+
   justify-content: space-around;
+
   align-items: center;
 
-  background: #0f1115;
-  border-radius: 20px;
+  background: var(--card);
 
-  box-shadow: 0 14px 40px rgba(0,0,0,0.25);
-  border: 1px solid #1f232d;
+  border-radius: 14px;
+
+  border: 1px solid var(--border);
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+
 }
 
 .navbar a {
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  opacity: 0.7;
-  transition: 0.2s ease;
-}
 
-.navbar a:hover {
-  opacity: 1;
+  text-decoration: none;
+
+  color: var(--text-secondary);
+
+  font-size: 12px;
+
+  font-weight: 600;
+
 }
 
 .navbar a.active {
-  opacity: 1;
+
   color: var(--accent);
-  font-weight: 700;
+
 }
+
 
 /* ================= LOADER ================= */
 
 #loader {
+
   position: fixed;
+
   inset: 0;
+
   background: var(--bg);
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
 }
 
 .spinner {
-  width: 45px;
-  height: 45px;
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid var(--accent);
+
+  width: 32px;
+
+  height: 32px;
+
+  border: 3px solid #1f2937;
+
+  border-top: 3px solid var(--accent);
+
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+
+  animation: spin 0.6s linear infinite;
+
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+
+  to {
+    transform: rotate(360deg);
+  }
+
 }
 
-/* ================= BACK HEADER FIX ================= */
+
+/* ================= PLAN HEADER ================= */
 
 .plan-header {
+
   position: relative;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
-  margin-bottom: 20px;
+
+  margin-bottom: 16px;
+
 }
 
 .plan-title {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 800;
-  text-align: center;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
 }
 
 .back-arrow {
+
   position: absolute;
+
   left: 0;
-  background: #eaecef;
-  color: #111;
-  border-radius: 14px;
-  padding: 8px 14px;
-  font-size: 18px;
-  font-weight: 700;
+
+  background: var(--card-2);
+
+  border-radius: 10px;
+
+  padding: 6px 10px;
+
+  font-size: 14px;
+
+  color: white;
+
+  border: 1px solid var(--border);
+
 }
 
+
+/* ================= RECOVERY MODAL ================= */
+
 #recoveryModal {
+
   position: fixed;
+
   inset: 0;
-  background: rgba(0,0,0,0.6);
+
+  background: rgba(0,0,0,0.7);
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   z-index: 2000;
+
 }
 
 .recovery-card {
+
   background: var(--card);
-  color: white;
-  padding: 28px;
-  border-radius: 24px;
+
+  padding: 20px;
+
+  border-radius: 14px;
+
   width: 90%;
-  max-width: 420px;
+
+  max-width: 360px;
+
+  border: 1px solid var(--border);
+
 }
 
 .recovery-card button {
-  width: 100%;
-  margin-top: 14px;
-}
 
-.calendar-day.missed {
-  background: #f97316;
-  color: white;
+  width: 100%;
+
+  margin-top: 10px;
+
 }

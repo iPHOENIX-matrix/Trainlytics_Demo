@@ -49,6 +49,14 @@ function getData() {
     data.recoveryChoice = {};
   }
 
+  if (!data.planOverride) {
+    data.planOverride = {};
+  }
+
+  if (!data.sessionAdditions) {
+    data.sessionAdditions = {};
+  }
+
   saveData(data);
   return data;
 }

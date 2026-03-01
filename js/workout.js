@@ -33,6 +33,10 @@ function renderWorkout() {
   const data = getData();
   const todayPlan = getWorkoutPlanForDate(targetDate);
 
+  if (!data.recoveryChoice) {
+    data.recoveryChoice = {};
+  }
+
   const isRestDay = !todayPlan || todayPlan.groups.length === 0;
 
   dateLabel.innerText = new Date(targetDate).toDateString();
@@ -66,7 +70,12 @@ function renderWorkout() {
     container.innerHTML += `
       <div class="card">
         <h3>${group.name}</h3>
+
         <div id="group-${group.name.replace(/\s/g,'')}"></div>
+
+        <button onclick="addExerciseToExistingGroup('${group.name}')">
+          + Add Exercise
+        </button>
       </div>
     `;
 
@@ -86,12 +95,171 @@ function renderWorkout() {
 
     });
 
+    // render session-added exercises for this group
+    const additions = data.sessionAdditions?.[targetDate]?.groups
+      ?.find(g => g.name === group.name);
+
+    if (additions) {
+
+      additions.exercises.forEach(ex => {
+
+        groupContainer.innerHTML += generateExerciseCard(
+          ex.name,
+          ex.sets,
+          ex.name
+        );
+
+      });
+
+}
+
   });
+
+  // Render session additions
+  const additions = data.sessionAdditions?.[targetDate];
+
+  if (additions?.groups) {
+
+    additions.groups.forEach(group => {
+
+      container.innerHTML += `
+        <div class="card">
+          <h3>${group.name} (Added)</h3>
+          <div id="group-added-${group.name.replace(/\s/g,'')}"></div>
+
+          <button onclick="addExerciseToSessionGroup('${group.name}')">
+            Add Exercise
+          </button>
+        </div>
+      `;
+
+      const groupContainer =
+        document.getElementById(`group-added-${group.name.replace(/\s/g,'')}`);
+
+      group.exercises.forEach(ex => {
+
+        groupContainer.innerHTML += generateExerciseCard(
+          ex.name,
+          ex.sets,
+          ex.name
+        );
+
+      });
+
+    });
+
+  }
 
   renderOptionalExercises(container);
 
+  container.innerHTML += `
+    <div class="card">
+      <button onclick="addSessionGroup()">
+        + Add Muscle Group
+      </button>
+    </div>
+  `;
+
   restoreDraft();
   hideLoader();
+}
+
+function addSessionGroup() {
+
+  const groupName = prompt("Enter Muscle Group Name:");
+  if (!groupName) return;
+
+  const date = getTargetDate();
+  const data = getData();
+
+  // ✅ CRITICAL FIX: ensure sessionAdditions exists
+  if (!data.sessionAdditions) {
+    data.sessionAdditions = {};
+  }
+
+  if (!data.sessionAdditions[date]) {
+    data.sessionAdditions[date] = {
+      groups: []
+    };
+  }
+
+  data.sessionAdditions[date].groups.push({
+    name: groupName,
+    exercises: []
+  });
+
+  saveData(data);
+
+  renderWorkout();
+}
+
+function addExerciseToSessionGroup(groupName) {
+
+  const exerciseName = prompt("Exercise name:");
+  if (!exerciseName) return;
+
+  const date = getTargetDate();
+  const data = getData();
+
+  // ✅ ensure safe access
+  if (!data.sessionAdditions) return;
+  if (!data.sessionAdditions[date]) return;
+
+  const group = data.sessionAdditions[date].groups
+    .find(g => g.name === groupName);
+
+  if (!group) return;
+
+  group.exercises.push({
+    name: exerciseName,
+    sets: 3
+  });
+
+  saveData(data);
+
+  renderWorkout();
+}
+
+function addExerciseToExistingGroup(groupName) {
+
+  const exerciseName = prompt("Exercise name:");
+  if (!exerciseName) return;
+
+  const date = getTargetDate();
+  const data = getData();
+
+  if (!data.sessionAdditions) {
+    data.sessionAdditions = {};
+  }
+
+  if (!data.sessionAdditions[date]) {
+    data.sessionAdditions[date] = {
+      groups: []
+    };
+  }
+
+  // find or create group addition entry
+  let group = data.sessionAdditions[date].groups
+    .find(g => g.name === groupName);
+
+  if (!group) {
+
+    group = {
+      name: groupName,
+      exercises: []
+    };
+
+    data.sessionAdditions[date].groups.push(group);
+  }
+
+  group.exercises.push({
+    name: exerciseName,
+    sets: 3
+  });
+
+  saveData(data);
+
+  renderWorkout();
 }
 
 /* ================= OPTIONAL EXERCISES ================= */
@@ -135,58 +303,103 @@ function generateExerciseCard(exercise, setCount, originalExercise = null) {
   let setsHTML = "";
 
   for (let i = 1; i <= setCount; i++) {
+
     setsHTML += `
+
       <div class="set-row">
-        <span>Set ${i}</span>
+
+        <span>${i}</span>
 
         <div class="input-with-unit">
+
           <input type="number"
-            class="weight"
-            placeholder="Weight"
-            oninput="liveUpdate('${exercise}')">
-          <span class="unit-label">kg</span>
+                 class="weight"
+                 placeholder="kg"
+                 oninput="liveUpdate('${exercise}')">
+
         </div>
 
         <div class="input-with-unit">
+
           <input type="number"
-            class="reps"
-            placeholder="Reps"
-            oninput="liveUpdate('${exercise}')">
-          <span class="unit-label">reps</span>
+                 class="reps"
+                 placeholder="reps"
+                 oninput="liveUpdate('${exercise}')">
+
         </div>
+
       </div>
+
     `;
   }
 
   return `
+
     <div class="exercise-card" data-exercise="${exercise}">
-      <h4>${exercise}</h4>
+
+      <div style="display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+                  margin-bottom:8px;">
+
+        <h4 style="margin:0;">${exercise}</h4>
+
+      </div>
+
 
       ${setsHTML}
 
+
       <div class="failure-display">
-        Failure: <span class="failure-value">0</span> kg
+
+        <small>Failure</small><br>
+
+        <span class="failure-value">0</span>
+
       </div>
 
-      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+
+      <div style="display:flex;
+                  gap:8px;
+                  margin-top:10px;
+                  flex-wrap:wrap;">
+
         <button class="save-btn"
-          onclick="saveExercise('${exercise}')">Save</button>
+                onclick="saveExercise('${exercise}')">
 
-        <button class="edit-btn"
-          style="display:none;"
-          onclick="editExercise('${exercise}')">Edit</button>
+          Save
 
-        <button class="edit-btn"
-          onclick="replaceExercise('${originalExercise || exercise}')">
-          Replace
         </button>
+
+
+        <button class="edit-btn"
+                style="display:none;"
+                onclick="editExercise('${exercise}')">
+
+          Edit
+
+        </button>
+
+
+        <button class="edit-btn"
+                onclick="replaceExercise('${originalExercise || exercise}')">
+
+          Replace
+
+        </button>
+
 
         <button class="delete-btn"
-          onclick="deleteExercise(this)">
+                onclick="deleteExercise(this)">
+
           Delete
+
         </button>
+
       </div>
+
     </div>
+
   `;
 }
 
@@ -489,10 +702,15 @@ function startEmptyWorkout() {
   container.innerHTML = "";
 
   document.getElementById("workoutTitle").innerHTML = `
-  <span id="workoutTitleText">${workoutName}</span>
-  <button onclick="editWorkoutTitle()" style="margin-left:10px;">
-    Edit
-  </button>
+    <span id="workoutTitleText">${workoutName}</span>
+
+    <button onclick="editWorkoutTitle()" style="margin-left:10px;">
+      Edit
+    </button>
+
+    <button onclick="triggerChangePlan()" style="margin-left:10px;">
+      Change Plan
+    </button>
   `;
 
   const data = getData();
@@ -668,8 +886,13 @@ function restoreCustomWorkout() {
 
   document.getElementById("workoutTitle").innerHTML = `
     <span id="workoutTitleText">${workout.title}</span>
+
     <button onclick="editWorkoutTitle()" style="margin-left:10px;">
       Edit
+    </button>
+
+    <button onclick="triggerChangePlan()" style="margin-left:10px;">
+      Change Plan
     </button>
   `;
 
@@ -730,7 +953,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const date = getTargetDate();
   const plan = getWorkoutPlanForDate(date);
 
-  // If today is rest day → just render rest
   if (!plan || plan.groups.length === 0) {
     renderWorkout();
     return;
@@ -738,18 +960,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const data = getData();
 
-  // If custom workout exists for today → load it
+  if (!data.planOverride) {
+    data.planOverride = {};
+  }
+
+  if (!data.recoveryChoice) {
+    data.recoveryChoice = {};
+  }
+
+  // ✅ PRIORITY 1: planOverride
+  if (data.planOverride[date]) {
+
+    if (data.planOverride[date] === "__CUSTOM__") {
+      restoreCustomWorkout();
+      return;
+    }
+
+    overrideWorkoutForToday(data.planOverride[date]);
+    return;
+  }
+
+  // ✅ PRIORITY 2: custom workout
   if (data.customWorkouts?.[date]) {
     restoreCustomWorkout();
     return;
   }
 
+  // ✅ PRIORITY 3: recovery modal
   const missedCount = countMissedWorkouts();
 
-  if (missedCount > 0) {
+  if (missedCount > 0 && !data.recoveryChoice[date]) {
     showRecoveryModal(missedCount);
-  } else {
-    renderWorkout();
+    return;
   }
+
+  // ✅ PRIORITY 4: normal workout
+  renderWorkout();
 
 });

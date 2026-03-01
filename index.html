@@ -5,179 +5,365 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trainlytics</title>
   <link rel="stylesheet" href="style.css">
+
   <meta name="theme-color" content="#0b0c10">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+
+  /* ================= PREMIUM DASHBOARD GRID ================= */
+
+  .dashboard-grid {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+
+  }
+
+  .dashboard-card {
+
+    background: var(--card);
+
+    border-radius: 14px;
+
+    padding: 14px;
+
+    border: 1px solid var(--border);
+
+  }
+
+  .dashboard-card small {
+
+    font-size: 11px;
+
+    color: var(--text-secondary);
+
+  }
+
+  .dashboard-card h3 {
+
+    font-size: 18px;
+
+    margin-top: 4px;
+
+  }
+
+  .dashboard-card .icon {
+
+    font-size: 16px;
+
+    margin-bottom: 6px;
+
+  }
+
+  .dashboard-card-wide {
+
+    grid-column: span 2;
+
+  }
+
+  .action-card {
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+
+  }
+
+  .action-card:hover {
+
+    transform: translateY(-2px);
+
+  }
+
+  </style>
 
 </head>
 
 <body>
 
-  <div id="loader">
-    <div class="spinner"></div>
-  </div>
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
 
 <div class="container">
 
-  <div class="home-header">
-    <div class="card">
-      <h2>TRAINLYTICS</h2>
-    </div>
+  <!-- App Title -->
+  <div class="card dashboard-card-wide">
 
-    <div class="card">
-      <small id="todayDate"></small>
-      <h2 id="todayWorkout"></h2>
-    </div>
+    <small id="todayDate"></small>
+
+    <h2 style="margin-top:6px;">TRAINLYTICS</h2>
+
+    <small id="todayWorkout"></small>
+
   </div>
 
-  <div class="card stats-card">
-    <div class="stat">
-      <span>🔥</span>
+
+  <!-- Stats Grid -->
+  <div class="dashboard-grid">
+
+    <div class="dashboard-card">
+
+      <div class="icon">🔥</div>
+
       <small>Streak</small>
+
       <h3 id="streakCount">0</h3>
+
     </div>
 
-    <div class="stat">
-      <span>📅</span>
-      <small>This Month</small>
-      <h3 id="monthlyCount">0</h3>
-    </div>
+    <div class="dashboard-card">
 
-    <div class="stat">
-      <span>🏆</span>
+      <div class="icon">🏆</div>
+
       <small>Best PR</small>
+
       <h3 id="bestPR">-</h3>
+
     </div>
+
+    <div class="dashboard-card dashboard-card-wide">
+
+      <div class="icon">📅</div>
+
+      <small>This Month</small>
+
+      <h3 id="monthlyCount">0</h3>
+
+    </div>
+
   </div>
 
-  <div class="home-actions">
-    <div class="card action-card" onclick="startWorkout()">
-      <h3>Start Your Workout</h3>
+
+  <!-- Actions -->
+  <div class="dashboard-grid">
+
+    <div class="dashboard-card action-card"
+         onclick="startWorkout()">
+
+      <small>Workout</small>
+
+      <h3>Start Workout</h3>
+
     </div>
 
-    <div class="card action-card" onclick="goToPlan()">
+    <div class="dashboard-card action-card"
+         onclick="goToPlan()">
+
+      <small>Plan</small>
+
       <h3>Workout Plan</h3>
+
     </div>
+
   </div>
 
+
 </div>
 
+
+<!-- Navbar -->
 <div class="navbar">
-  <a href="index.html">Home</a>
+
+  <a href="index.html" class="active">Home</a>
+
   <a href="calendar.html">Calendar</a>
+
   <a href="progress.html">Progress</a>
+
   <a href="settings.html">Settings</a>
+
 </div>
 
+
+<!-- Scripts -->
 <script src="js/storage.js"></script>
+
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const data = getData();
-  const workouts = data.workouts;
+  const workouts = data.workouts || {};
 
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
 
   document.getElementById("todayDate").innerText =
     today.toDateString();
 
+
   // Active plan workout name
+
   const plan = data.workoutPlans[data.activePlanId];
-  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const dayName = days[today.getDay()];
-  const todayPlan = plan.days[dayName];
+
+  const days = [
+    "Sunday","Monday","Tuesday",
+    "Wednesday","Thursday","Friday","Saturday"
+  ];
+
+  const todayPlan = plan.days[days[today.getDay()]];
 
   let displayText = "No Plan";
 
   if (todayPlan) {
 
-    if (todayPlan.groups && todayPlan.groups.length > 0) {
-      // Show group names instead of generic day name
-      const groupNames = todayPlan.groups.map(g => g.name);
+    if (todayPlan.groups?.length > 0) {
+
+      const groupNames =
+        todayPlan.groups.map(g => g.name);
+
       displayText = groupNames.join(" + ");
-    } else {
+
+    }
+    else {
+
       displayText = todayPlan.name;
+
     }
 
-}
+  }
 
-document.getElementById("todayWorkout").innerText = displayText;
+  document.getElementById("todayWorkout").innerText =
+    displayText;
+
 
 
   // Monthly count
+
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
+
   let monthCount = 0;
 
   Object.keys(workouts).forEach(date => {
+
     const d = new Date(date);
-    if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+
+    if (
+      d.getMonth() === currentMonth &&
+      d.getFullYear() === currentYear
+    ) {
+
       monthCount++;
+
     }
+
   });
 
-  document.getElementById("monthlyCount").innerText = monthCount;
+  document.getElementById("monthlyCount").innerText =
+    monthCount;
 
-  // 🔥 Correct Streak Logic (timezone safe)
+
+
+  // Streak logic
 
   let streak = 0;
 
   function getTodayString() {
+
     const now = new Date();
-    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+
+    const local =
+      new Date(now.getTime() -
+      now.getTimezoneOffset() * 60000);
+
     return local.toISOString().split("T")[0];
+
   }
 
   let checkDateStr = getTodayString();
 
   while (workouts[checkDateStr]) {
+
     streak++;
 
     const d = new Date(checkDateStr);
+
     d.setDate(d.getDate() - 1);
 
-    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-    checkDateStr = local.toISOString().split("T")[0];
+    const local =
+      new Date(d.getTime() -
+      d.getTimezoneOffset() * 60000);
+
+    checkDateStr =
+      local.toISOString().split("T")[0];
+
   }
 
-  document.getElementById("streakCount").innerText = streak;
+  document.getElementById("streakCount").innerText =
+    streak;
+
 
 
   // Best PR
-  const bestPR = Math.max(...Object.values(data.pr || {}), 0);
-  document.getElementById("bestPR").innerText = bestPR || "-";
+
+  const bestPR =
+    Math.max(...Object.values(data.pr || {}), 0);
+
+  document.getElementById("bestPR").innerText =
+    bestPR || "-";
+
 });
 
-function startWorkout() {
-  const now = new Date();
-  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-  const todayStr = localDate.toISOString().split("T")[0];
 
-  window.location.href = `workout.html?edit=${todayStr}`;
+
+function startWorkout() {
+
+  const now = new Date();
+
+  const localDate =
+    new Date(now.getTime() -
+    now.getTimezoneOffset() * 60000);
+
+  const todayStr =
+    localDate.toISOString().split("T")[0];
+
+  window.location.href =
+    `workout.html?edit=${todayStr}`;
+
 }
+
 
 
 function goToPlan() {
-  window.location.href = "workout-plan.html?mode=view";
+
+  window.location.href =
+    "workout-plan.html?mode=view";
+
 }
 
 </script>
 
+
+
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
-  const loader = document.getElementById("loader");
+
+  const loader =
+    document.getElementById("loader");
+
   if (!loader) return;
 
   setTimeout(() => {
+
     loader.style.opacity = "0";
+
     setTimeout(() => loader.remove(), 300);
+
   }, 100);
+
 });
+
 </script>
-
-
 
 
 </body>
